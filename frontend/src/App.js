@@ -9,7 +9,7 @@ const App = () => {
   useEffect(() => {
     const fetchStocks = async () => {
       try {
-        const response = await axios.get(`http://${process.env.REACT_APP_FASTAPI_IP}:${process.env.REACT_APP_FASTAPI_PORT}/stocks`, {
+        const response = await axios.get(`https://${process.env.REACT_APP_FASTAPI_IP}/stocks`, {
           headers: {
             Authorization: process.env.REACT_APP_FASTAPI_TOKEN,
           },
