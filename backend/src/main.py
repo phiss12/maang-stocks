@@ -45,28 +45,26 @@ app.add_middleware(
 MONGO_URL = f"mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HEADER_1")}.lubr6.mongodb.net/?retryWrites=true&w=majority&appName={os.getenv("DB_HEADER_2")}"
 client = MongoClient(MONGO_URL, server_api=ServerApi('1'))
 db = client[os.getenv("DB_NAME")]
+stock_data = {}
+for name in ["meta", "amazon", "apple", "netflix", "google"]:
+    collection = db[name]
+    documents = collection.find({}, {"_id": 0, "symbol": 1, "price": 1, "percentageChange": 1})
+    # Store each document in the dictionary
+    for doc in documents:
+        if float(doc["percentageChange"]) < 0:
+            down = True
+        else:
+            down = False
+        stock_data[name] = {
+            "symbol" : doc["symbol"],
+            "price": doc["price"],
+            "percentageChange": abs(float(doc["percentageChange"])),
+            "down" : down
+        }
 
 @app.get("/stocks")
 async def get_stock_data(authenticated: dict = Depends(authenticate_token)):
     try:
-        stock_data = {}
-        for name in ["meta", "amazon", "apple", "netflix", "google"]:
-            collection = db[name]
-            documents = collection.find({}, {"_id": 0, "symbol": 1, "price": 1, "percentageChange": 1})
-            # Store each document in the dictionary
-            for doc in documents:
-                print(float(doc["percentageChange"]))
-                if float(doc["percentageChange"]) < 0:
-                    down = True
-                else:
-                    down = False
-                print()
-                stock_data[name] = {
-                    "symbol" : doc["symbol"],
-                    "price": doc["price"],
-                    "percentageChange": abs(float(doc["percentageChange"])),
-                    "down" : down
-                }
         return JSONResponse(content={"stock_data": stock_data})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
