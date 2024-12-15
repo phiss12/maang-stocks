@@ -20,7 +20,7 @@ frontend/.env
 # Logs and temporary files
 *.log
 *.tmp
-*.lock
+.lock
 pip-log.txt
 pip-delete-this-directory.txt
 
