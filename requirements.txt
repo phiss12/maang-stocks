@@ -7,3 +7,4 @@ invoke>=2.2.0
 commitizen>=4.1.0
 python-dotenv>=1.0.1
 axios>=0.4.0
+motor>=3.5.1
