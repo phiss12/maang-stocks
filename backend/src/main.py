@@ -33,11 +33,15 @@ async def authenticate_token(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your React app's origin
+    allow_origins=[
+        "http://localhost:3000",  # Local React development
+        "https://maang-stocks.vercel.app",  # Production React domain
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 MONGO_URL = f"mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HEADER_1")}.lubr6.mongodb.net/?retryWrites=true&w=majority&appName={os.getenv("DB_HEADER_2")}"
 client = MongoClient(MONGO_URL, server_api=ServerApi('1'))
