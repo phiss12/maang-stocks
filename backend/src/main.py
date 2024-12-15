@@ -9,7 +9,6 @@ from pymongo.server_api import ServerApi
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from functools import lru_cache
 
 security = HTTPBearer()
 
@@ -48,31 +47,28 @@ db = client[os.getenv("DB_NAME")]
 
 
 
-@lru_cache(maxsize=10)
-def get_cached_stock_data():
-    stock_data = {}
-    for name in ["meta", "amazon", "apple", "netflix", "google"]:
-        collection = db[name]
-        documents = collection.find({}, {"_id": 0, "symbol": 1, "price": 1, "percentageChange": 1})
-        # Store each document in the dictionary
-        for doc in documents:
-            if float(doc["percentageChange"]) < 0:
-                down = True
-            else:
-                down = False
-            stock_data[name] = {
-                "symbol" : doc["symbol"],
-                "price": doc["price"],
-                "percentageChange": abs(float(doc["percentageChange"])),
-                "down" : down
-            }
-    return stock_data
-
 @app.get("/stocks")
 async def get_stock_data(authenticated: dict = Depends(authenticate_token)):
     try:
-        return JSONResponse(content={"stock_data": get_cached_stock_data()})
+        
+        return JSONResponse(content={"stock_data": db})
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
+"""stock_data = {}
+        for name in ["meta", "amazon", "apple", "netflix", "google"]:
+            collection = db[name]
+            documents = collection.find({}, {"_id": 0, "symbol": 1, "price": 1, "percentageChange": 1})
+            # Store each document in the dictionary
+            for doc in documents:
+                if float(doc["percentageChange"]) < 0:
+                    down = True
+                else:
+                    down = False
+                stock_data[name] = {
+                    "symbol" : doc["symbol"],
+                    "price": doc["price"],
+                    "percentageChange": abs(float(doc["percentageChange"])),
+                    "down" : down
+                }"""

@@ -15,23 +15,38 @@ const App = () => {
           },
         });
 
-        const stockData = response.data.stock_data;
-        const processedStocks = Object.values(stockData).map(stock => ({
-          symbol: stock.symbol,
-          latest_price: stock.price,
-          percentage_change: stock.percentageChange,
-          status: stock.down ? 'down' : 'up',
-        }));
-        setStocks(processedStocks);
+        const db = response.data.stock_data;
+        const collections = ["meta", "amazon", "apple", "netflix", "google"];
+
+        const stockData = {};
+        for (const name of collections) {
+          const collection = db.collection(name);
+          const documents = await collection
+            .find({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } })
+            .toArray();
+
+          if (documents.length > 0) {
+            const doc = documents[0];
+            stockData[name] = {
+              symbol: doc.symbol,
+              price: doc.price,
+              percentageChange: Math.abs(doc.percentageChange),
+              down: doc.percentageChange < 0,
+            };
+          }
+        }
+
+        setStocks(Object.values(stockData));
+        await client.close();
       } catch (err) {
-        setError('Failed to fetch stock data.');
+        setError("Failed to fetch stock data.");
         console.error(err);
-      } finally {
-        setLoading(false);
       }
     };
+
     fetchStocks();
   }, []);
+
 
   if (loading) return <h1>Loading...</h1>;
   if (error) return <h1 style={{ color: 'red' }}>{error}</h1>;
