@@ -1,0 +1,98 @@
+  /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Arial", sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+    display: flex; /* Flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+    padding: 20px;
+  }
+  
+  /* Container */
+  .container {
+    text-align: center;
+  }
+  
+  /* Title */
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 20px; /* Add space between title and cards */
+    color: #212529;
+  }
+  
+  /* Grid */
+.stocks {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(200px, 1fr)); /* Up to 5 columns */
+    gap: 20px;
+    justify-content: center; /* Center grid within the container */
+  }
+  
+  @media (max-width: 1100px) {
+    /* Enable auto-fit when the screen width is smaller */
+    .stocks {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+  
+  /* Stock Card */
+  .stock-card {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .stock-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Status Classes */
+  .up {
+    background-color: #e3fcef;
+    border-color: #28a745;
+    color: #155724;
+  }
+  
+  .down {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+  }
+  
+  /* Text Styles */
+  .symbol {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .status {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  
+  .price {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+  /* Loading and Error States */
+  .loading,
+  .error {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #6c757d;
+    text-align: center;
+  }
+  
