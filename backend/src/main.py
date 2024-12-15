@@ -33,7 +33,8 @@ async def authenticate_token(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://maang-stocks.vercel.app"  # Production React domain
+        "https://maang-stocks.vercel.app",  
+        # "http://localhost:3000"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -50,8 +51,23 @@ db = client[os.getenv("DB_NAME")]
 @app.get("/stocks")
 async def get_stock_data(authenticated: dict = Depends(authenticate_token)):
     try:
-        
-        return JSONResponse(content={"stock_data": db})
+        stock_data = {}
+        for name in ["meta", "amazon", "apple", "netflix", "google"]:
+            collection = db[name]
+            documents = collection.find({}, {"_id": 0, "symbol": 1, "price": 1, "percentageChange": 1})
+            # Store each document in the dictionary
+            for doc in documents:
+                if float(doc["percentageChange"]) < 0:
+                    down = True
+                else:
+                    down = False
+                stock_data[name] = {
+                    "symbol" : doc["symbol"],
+                    "price": doc["price"],
+                    "percentageChange": abs(float(doc["percentageChange"])),
+                    "down" : down
+                }
+        return {"stock_data": stock_data}
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
