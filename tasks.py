@@ -8,7 +8,7 @@ load_dotenv()
 @task
 def prod_server(c: Context):
     c.run(
-        f"uvicorn backend.src.main:app --host {os.getenv('API_HOST')} --reload"
+        f"uvicorn backend.src.main:app --host {os.getenv('API_HOST', '0.0.0.0')} --port {os.getenv('API_PORT', 8000)} --reload"
     )
 
 
