@@ -19,9 +19,7 @@ MONGO_URL = f"mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{o
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = [
-        os.getenv("DEV_ALLOWED_LINK") if bool(os.getenv("DEV_ENV")) else os.getenv("PROD_ALLOWED_LINK")
-    ],
+    allow_origins = [os.getenv("ALLOWED_LINK")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
