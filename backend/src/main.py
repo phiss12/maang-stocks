@@ -4,11 +4,11 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi import security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
+from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 
 security = HTTPBearer()
 
@@ -44,7 +44,7 @@ async def authenticate_token(
 async def get_stock_data(authenticated: dict = Depends(authenticate_token)):
     try:
         # Use async MongoDB client (Motor)
-        client = AsyncIOMotorClient(MONGO_URL, server_api=ServerApi('1'))
+        client = MongoClient(MONGO_URL, server_api=ServerApi('1'))
         db = client[os.getenv("DB_NAME")]
 
         # Fetch all collection names
