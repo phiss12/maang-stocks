@@ -19,9 +19,7 @@ MONGO_URL = f"mongodb+srv://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{o
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = [
-        os.getenv("DEV_ALLOWED_LINK") if bool(os.getenv("DEV_ENV")) else os.getenv("PROD_ALLOWED_LINK")
-    ],
+    allow_origins = [os.getenv("ALLOWED_LINK")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,12 +46,12 @@ async def get_stock_data(authenticated: dict = Depends(authenticate_token)):
         db = client[os.getenv("DB_NAME")]
 
         # Fetch all collection names
-        collection_names = await db.list_collection_names()
+        collection_names = db.list_collection_names()
         stock_data = {}
 
         # Iterate over collections and fetch one document per collection
-        for collection_name in collection_names:
-            document = await db[collection_name].find_one(
+        for collection_name in sorted(collection_names):
+            document = db[collection_name].find_one(
                 {}, {"_id": 0, "symbol": 1, "price": 1, "percentageChange": 1}
             )
             if document:
